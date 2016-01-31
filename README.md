@@ -14,10 +14,10 @@ not conflict with other ChiliPeppr widgets.
 | ID                    | com-chilipeppr-elem-dragdrop |
 | Name                  | Element / Drag Drop |
 | Description           | An element that presents a drag and drop icon that allows files to be dragged onto it. A pubsub event called /com-chilipeppr-elem-dragdrop/ondropped is published when the drop is complete. The contents of the file are passed in the pubsub call so different widgets/elements can consume the contents of the file. |
-| chilipeppr.load() URL | http://raw.githubusercontent.com/raykholo/elem-dragdrop/master/auto-generated-widget.html |
-| Edit URL              | http://ide.c9.io/raykholo/elem-dragdrop |
-| Github URL            | http://github.com/raykholo/elem-dragdrop |
-| Test URL              | https://preview.c9users.io/raykholo/elem-dragdrop/widget.html |
+| chilipeppr.load() URL | http://raw.githubusercontent.com/chilipeppr/elem-dragdrop/master/auto-generated-widget.html |
+| Edit URL              | http://ide.c9.io/chilipeppr/elem-dragdrop |
+| Github URL            | http://github.com/chilipeppr/elem-dragdrop |
+| Test URL              | https://preview.c9users.io/chilipeppr/elem-dragdrop/widget.html |
 
 ## Example Code for chilipeppr.load() Statement
 
@@ -30,7 +30,7 @@ back the instance of it.
 ```javascript
 chilipeppr.load(
   "#myDivWidgetInsertedInto",
-  "http://raw.githubusercontent.com/raykholo/elem-dragdrop/master/auto-generated-widget.html",
+  "http://raw.githubusercontent.com/chilipeppr/elem-dragdrop/master/auto-generated-widget.html",
   function() {
     // Callback after widget loaded into #myDivWidgetInsertedInto
     cprequire(
