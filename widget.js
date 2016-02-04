@@ -33,8 +33,11 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
     console.log("Inside of define for com-chilipeppr-elem-dragdrop");
     return {
         id: "com-chilipeppr-elem-dragdrop",
-        url: "http://fiddle.jshell.net/chilipeppr/Z9F6G/show/light/",
-        fiddleurl: "http://jsfiddle.net/chilipeppr/Z9F6G/",
+        url: "(auto fill by runme.js)",       // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
+        fiddleurl: "(auto fill by runme.js)", // The edit URL. This can be auto-filled by runme.js in Cloud9 if you'd like, or just define it on your own to help people know where they can edit/fork your widget
+        githuburl: "(auto fill by runme.js)", // The backing github repo
+        testurl: "(auto fill by runme.js)",   // The standalone working widget so can view it working by itself
+
         name: "Element / Drag Drop",
         desc: "An element that presents a drag and drop icon that allows files to be dragged onto it. A pubsub event called /com-chilipeppr-elem-dragdrop/ondropped is published when the drop is complete. The contents of the file are passed in the pubsub call so different widgets/elements can consume the contents of the file.",
         publish: {
