@@ -25,7 +25,7 @@ cprequire_test(["inline:com-chilipeppr-elem-dragdrop"], function (dd) {
         }, 5000);
     }
     //testLoadGcodePubSub();
-    testLoadGcodeFromUrlPubSub();
+    //testLoadGcodeFromUrlPubSub();
 
     $("body").css('padding', '20px');
     $('title').html(dd.name);
@@ -73,10 +73,12 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
             chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", this, this.createRecentFileEntry, 20);
             
             // setup chilipeppr logo btn click
-            $('.com-chilipeppr-elem-dragdrop-loadlogo').click(this.loadChiliPepprGcode.bind(this));
-            $('.com-chilipeppr-elem-dragdrop-loadlogoinch').click(this.loadChiliPepprGcodeInch.bind(this));
+            //$('.com-chilipeppr-elem-dragdrop-loadlogo').click(this.loadChiliPepprGcode.bind(this));
+            $('.com-chilipeppr-elem-dragdrop-loadlogo').click("//i2dcui.appspot.com/3d/chilipepprlogo.nc", this.loadUrlDoNotCreateRecentFileEntry.bind(this));
+            //$('.com-chilipeppr-elem-dragdrop-loadlogoinch').click(this.loadChiliPepprGcodeInch.bind(this));
+            $('.com-chilipeppr-elem-dragdrop-loadlogoinch').click("//i2dcui.appspot.com/3d/chilipepprlogo.inches.nc", this.loadUrlDoNotCreateRecentFileEntry.bind(this));
             $('.com-chilipeppr-elem-dragdrop-loadcirclediamondsquare').click("//i2dcui.appspot.com/img/gcode/Circle-diamond-square-50-45-40mm.gcode", this.loadUrlDoNotCreateRecentFileEntry.bind(this));
-            $('.com-chilipeppr-elem-dragdrop-loadcirclediamondsquare').click("//i2dcui.appspot.com/img/svg/chilipepprlogo.svg", this.loadUrlDoNotCreateRecentFileEntry.bind(this));
+            $('.com-chilipeppr-elem-dragdrop-loadlogosvg').click("//i2dcui.appspot.com/img/svg/chilipepprlogo.svg", this.loadUrlDoNotCreateRecentFileEntry.bind(this));
             
             // setup del files
             $('.com-chilipeppr-elem-dragdrop .recent-file-delete').click(this.deleteRecentFiles.bind(this));
@@ -245,13 +247,24 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
             });
         },
         loadUrlDoNotCreateRecentFileEntry: function(evt) {
+            console.log("doing loadUrlDoNotCreateRecentFileEntry. evt:", evt);
             var url = $('.com-chilipeppr-elem-dragdrop .dropdown-menu .url-load').val();
             if (evt.data) {
                 url = evt.data;
             }
+            // do everything thru slingshot
+            if (url.match(/\/\/i2dcui.appspot.com\/slingshot/)) {
+                console.log("the url already seems to have slingshot so not preprending");
+            } else {
+                if (url.match(/\/\//)) {
+                    url = "http:" + url;
+                }
+                url = "//i2dcui.appspot.com/slingshot?url=" + url;
+            }
+            
             var that = this;
             $.get(url, null, function(data) {
-                console.log("got gcode from url. url:", url);
+                console.log("got file from url. url:", url);
                 var info = {
                     name:url, 
                     lastModified: new Date()
