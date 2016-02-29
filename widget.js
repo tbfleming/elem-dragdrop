@@ -27,6 +27,9 @@ cprequire_test(["inline:com-chilipeppr-elem-dragdrop"], function (dd) {
     //testLoadGcodePubSub();
     testLoadGcodeFromUrlPubSub();
 
+    $("body").css('padding', '20px');
+    $('title').html(dd.name);
+    
 } /*end_test*/ );
 
 cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function () {
@@ -72,7 +75,8 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
             // setup chilipeppr logo btn click
             $('.com-chilipeppr-elem-dragdrop-loadlogo').click(this.loadChiliPepprGcode.bind(this));
             $('.com-chilipeppr-elem-dragdrop-loadlogoinch').click(this.loadChiliPepprGcodeInch.bind(this));
-            $('.com-chilipeppr-elem-dragdrop-loadcirclediamondsquare').click("http://chilipeppr.com/img/gcode/Circle-diamond-square-50-45-40mm.gcode", this.loadUrlDoNotCreateRecentFileEntry.bind(this));
+            $('.com-chilipeppr-elem-dragdrop-loadcirclediamondsquare').click("//i2dcui.appspot.com/img/gcode/Circle-diamond-square-50-45-40mm.gcode", this.loadUrlDoNotCreateRecentFileEntry.bind(this));
+            $('.com-chilipeppr-elem-dragdrop-loadcirclediamondsquare').click("//i2dcui.appspot.com/img/svg/chilipepprlogo.svg", this.loadUrlDoNotCreateRecentFileEntry.bind(this));
             
             // setup del files
             $('.com-chilipeppr-elem-dragdrop .recent-file-delete').click(this.deleteRecentFiles.bind(this));
