@@ -1,7 +1,7 @@
 # com-chilipeppr-elem-dragdrop
 An element that presents a drag and drop icon that allows files to be dragged onto it. A pubsub event called /com-chilipeppr-elem-dragdrop/ondropped is published when the drop is complete. The contents of the file are passed in the pubsub call so different widgets/elements can consume the contents of the file.
 
-
+![alt text](screenshot.png "Screenshot")
 
 ## ChiliPeppr Element / Drag Drop
 
