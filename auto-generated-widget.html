@@ -68,16 +68,17 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
     console.log("Inside of define for com-chilipeppr-elem-dragdrop");
     return {
         id: "com-chilipeppr-elem-dragdrop",
-        url: "http://raw.githubusercontent.com/chilipeppr/elem-dragdrop/master/auto-generated-widget.html",       // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
-        fiddleurl: "http://ide.c9.io/chilipeppr/elem-dragdrop", // The edit URL. This can be auto-filled by runme.js in Cloud9 if you'd like, or just define it on your own to help people know where they can edit/fork your widget
-        githuburl: "http://github.com/chilipeppr/elem-dragdrop", // The backing github repo
-        testurl: "http://elem-dragdrop-chilipeppr.c9users.io/widget.html",   // The standalone working widget so can view it working by itself
+        url: "http://raw.githubusercontent.com/tbfleming/elem-dragdrop/master/auto-generated-widget.html",       // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
+        fiddleurl: "http://ide.c9.io/undefined/undefined", // The edit URL. This can be auto-filled by runme.js in Cloud9 if you'd like, or just define it on your own to help people know where they can edit/fork your widget
+        githuburl: "http://github.com/tbfleming/elem-dragdrop", // The backing github repo
+        testurl: "http://undefined-undefined.c9users.io/widget.html",   // The standalone working widget so can view it working by itself
 
         name: "Element / Drag Drop",
         desc: "An element that presents a drag and drop icon that allows files to be dragged onto it. A pubsub event called /com-chilipeppr-elem-dragdrop/ondropped is published when the drop is complete. The contents of the file are passed in the pubsub call so different widgets/elements can consume the contents of the file.",
         publish: {
-            "/com-chilipeppr-elem-dragdrop/ondropped":"When the file is dropped. Payload contains the file.",
-            "/com-chilipeppr-elem-dragdrop/ondragover":"When the mouse is hovering over drop area so you can hilite/react. Empty payload.",
+            "/com-chilipeppr-elem-dragdrop/ondropped":"When the file is dropped. Payload contains the file in a string.",
+            "/com-chilipeppr-elem-dragdrop/ondroppedStl": "When an STL file is dropped. Payload contains the file in an ArrayBuffer.",
+            "/com-chilipeppr-elem-dragdrop/ondragover": "When the mouse is hovering over drop area so you can hilite/react. Empty payload.",
             "/com-chilipeppr-elem-dragdrop/ondragleave": "When mouse stops hovering so you can remove hilites. Empty payload.",
             "/com-chilipeppr-elem-dragdrop/ondragdone" : "When user drops the file onto browser so you can remove hilites. Empty payload. Don't confuse this with ondropped which is the pubsub that actually contains file that was dropped."
         },
@@ -498,6 +499,7 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
                             //console.log("file");
                             //console.log(files[i]);
                             var thefile = files[i];
+                            var isStl = thefile.name.substring(thefile.name.length - 4).toLowerCase() === '.stl';
                             reader.onload = function (event) {
                                 //console.log(event);
                                 //console.log(event.target.result);
@@ -510,7 +512,10 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
                                     lastModified: thefile.lastModifiedDate
                                 };
                                 console.log("the drag/drop widget is about to publish an onDropped event. file.length:", event.target.result.length, "info:", info);
-                                chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", event.target.result, info);
+                                if (isStl)
+                                    chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondroppedStl", event.target.result, info);
+                                else
+                                    chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", event.target.result, info);
                                 chilipeppr.publish(
                                     "/com-chilipeppr-elem-flashmsg/flashmsg", "File Loaded", 
                                     '<div class="row">' +
@@ -535,8 +540,10 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
                                     "</div>", 1000 * 3, true);
                             };
                             //reader.readAsDataURL(files[i]);
-                            reader.readAsText(files[i]);
-
+                            if (isStl)
+                                reader.readAsArrayBuffer(files[i])
+                            else
+                                reader.readAsText(files[i]);
                         })(i);
                     }
 
