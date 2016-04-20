@@ -45,7 +45,7 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
         desc: "An element that presents a drag and drop icon that allows files to be dragged onto it. A pubsub event called /com-chilipeppr-elem-dragdrop/ondropped is published when the drop is complete. The contents of the file are passed in the pubsub call so different widgets/elements can consume the contents of the file.",
         publish: {
             "/com-chilipeppr-elem-dragdrop/ondropped":"When the file is dropped. Payload contains the file in a string.",
-            "/com-chilipeppr-elem-dragdrop/ondroppedStl": "When an STL file is dropped. Payload contains the file in an ArrayBuffer.",
+            "/com-chilipeppr-elem-dragdrop/ondroppedTyped": "When certain file types are dropped. Payload contains the file type and the file content in an ArrayBuffer.",
             "/com-chilipeppr-elem-dragdrop/ondragover": "When the mouse is hovering over drop area so you can hilite/react. Empty payload.",
             "/com-chilipeppr-elem-dragdrop/ondragleave": "When mouse stops hovering so you can remove hilites. Empty payload.",
             "/com-chilipeppr-elem-dragdrop/ondragdone" : "When user drops the file onto browser so you can remove hilites. Empty payload. Don't confuse this with ondropped which is the pubsub that actually contains file that was dropped."
@@ -467,7 +467,11 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
                             //console.log("file");
                             //console.log(files[i]);
                             var thefile = files[i];
-                            var isStl = thefile.name.substring(thefile.name.length - 4).toLowerCase() === '.stl';
+                            var type;
+                            if (thefile.name.toLowerCase().endsWith('.stl'))
+                                type = 'stl'; // No MIME type exists for this
+                            else if (thefile.type.startsWith('image/'))
+                                type = thefile.type;
                             reader.onload = function (event) {
                                 //console.log(event);
                                 //console.log(event.target.result);
@@ -480,8 +484,8 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
                                     lastModified: thefile.lastModifiedDate
                                 };
                                 console.log("the drag/drop widget is about to publish an onDropped event. file.length:", event.target.result.length, "info:", info);
-                                if (isStl)
-                                    chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondroppedStl", event.target.result, info);
+                                if (type)
+                                    chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondroppedTyped", type, event.target.result, info);
                                 else
                                     chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", event.target.result, info);
                                 chilipeppr.publish(
@@ -508,7 +512,7 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
                                     "</div>", 1000 * 3, true);
                             };
                             //reader.readAsDataURL(files[i]);
-                            if (isStl)
+                            if (type)
                                 reader.readAsArrayBuffer(files[i])
                             else
                                 reader.readAsText(files[i]);
