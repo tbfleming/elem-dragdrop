@@ -279,6 +279,14 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
                 //chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "Error on Load URL", JSON.stringify(err));
             });
         },
+        getType: function(filename, mime) {
+            if (filename.toLowerCase().endsWith('.stl'))
+                return 'stl';
+            else if (mime.startsWith('image/'))
+                return mime;
+            else
+                return undefined;   // Use non-typed ondropped message
+        },
         loadUrlDoNotCreateRecentFileEntry: function(evt) {
             console.log("doing loadUrlDoNotCreateRecentFileEntry. evt:", evt);
             var url = $('.com-chilipeppr-elem-dragdrop .dropdown-menu .url-load').val();
@@ -296,19 +304,24 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
             }
             
             var that = this;
-            $.get(url, null, function(data) {
+            $.get(url, null, function(data, status, xhr) {
                 console.log("got file from url. url:", url);
+                var type = that.getType(url, xhr.getResponseHeader('content-type'));
                 var info = {
                     name:url, 
                     lastModified: new Date()
                 };
                 console.log("info:", info);
-                // unsubscribe so we don't get loopback
-                chilipeppr.unsubscribe("/com-chilipeppr-elem-dragdrop/ondropped", that.createRecentFileEntry);
-                // send event off as if the file was drag/dropped
-                chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", data, info);
-                // resubscribe
-                chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", that, that.createRecentFileEntry);
+                if (type)
+                    chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondroppedTyped", type, data, info);
+                else {
+                    // unsubscribe so we don't get loopback
+                    chilipeppr.unsubscribe("/com-chilipeppr-elem-dragdrop/ondropped", that.createRecentFileEntry);
+                    // send event off as if the file was drag/dropped
+                    chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", data, info);
+                    // resubscribe
+                    chilipeppr.subscribe("/com-chilipeppr-elem-dragdrop/ondropped", that, that.createRecentFileEntry);
+                }
             }, 'text')
             .error(function () {
                 console.log("got error loading url. are we online?");    
@@ -450,6 +463,7 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
             //dropArea = $('.dropArea');
             this.dropArea = $(dropDomElemSelector);
             this.txtDomElemSelector = $(txtDomElemSelector);
+            var that = this;
 
             // Attach our drag and drop handlers.
             this.dropArea.bind({
@@ -499,11 +513,7 @@ cpdefine("inline:com-chilipeppr-elem-dragdrop", ["chilipeppr_ready"], function (
                             //console.log("file");
                             //console.log(files[i]);
                             var thefile = files[i];
-                            var type;
-                            if (thefile.name.toLowerCase().endsWith('.stl'))
-                                type = 'stl'; // No MIME type exists for this
-                            else if (thefile.type.startsWith('image/'))
-                                type = thefile.type;
+                            var type = that.getType(thefile.name, thefile.type);
                             reader.onload = function (event) {
                                 //console.log(event);
                                 //console.log(event.target.result);
